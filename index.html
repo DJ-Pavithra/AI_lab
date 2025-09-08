@@ -1,0 +1,330 @@
+{% extends "base.html" %}
+{% block content %}
+<script>
+function checkUnlearnable() {
+    const skills = document.getElementById('skills-input').value.trim();
+    if (!skills) {
+        alert('Please enter your known skills first');
+        return;
+    }
+    window.location.href = `/unlearnable-topics?skills=${encodeURIComponent(skills)}`;
+}
+</script>
+
+<div class="card">
+  <h2>🎯 Personalized Learning Path Generator</h2>
+  <p>Generate customized learning paths using advanced Prolog concepts including unification, backtracking, recursion, and more!</p>
+</div>
+
+<form method="POST" action="{{ url_for('recommend') }}" class="card">
+  <h3>📚 Learning Goal</h3>
+  <select name="goal" required>
+    <option value="">Choose your learning goal...</option>
+    {% for goal in goals %}
+      <option value="{{ goal }}">{{ goal.replace('_', ' ').title() }}</option>
+    {% endfor %}
+  </select>
+
+  <h3>🛠️ Current Skills</h3>
+  <div class="skills-section">
+    <input type="text" id="skills-input" name="skills" placeholder="Enter skills separated by commas (e.g., html, css, python)" required>
+    <small>List the skills you already know to build upon</small>
+    <button type="button" onclick="checkUnlearnable()" class="btn-utility" style="margin-top: 10px; width: auto;">
+      🚧 Check Unlearnable Topics
+    </button>
+  </div>
+
+  <h3>⏰ Available Time</h3>
+  <input type="number" name="time" placeholder="Hours available for learning" min="1" max="1000" required>
+  <small>How many hours can you dedicate to this learning path?</small>
+
+  <h3>📊 User Profile</h3>
+  <div class="row">
+    <div class="col">
+      <label>Experience Level:</label>
+      <select name="user_level" required>
+        <option value="beginner">Beginner</option>
+        <option value="intermediate">Intermediate</option>
+        <option value="advanced">Advanced</option>
+      </select>
+    </div>
+    <div class="col">
+      <label>Learning Style:</label>
+      <select name="learning_style" required>
+        <option value="visual">Visual (Design, UI/UX)</option>
+        <option value="practical">Practical (Tools, Hands-on)</option>
+        <option value="theoretical">Theoretical (Backend, Algorithms)</option>
+      </select>
+    </div>
+  </div>
+
+  <button type="submit" class="btn-primary">🚀 Generate Learning Path</button>
+</form>
+
+
+<div class="card">
+  <h3>⚡ Quick Utilities</h3>
+  <p>Demonstrate additional Prolog concepts: dynamic predicates, list operations, and arithmetic.</p>
+  
+  <div class="utilities-grid">
+    <div class="utility-item">
+      <h4>🗑️ Remove Known Skill</h4>
+      <form method="POST" action="{{ url_for('remove_skill') }}" class="utility-form">
+        <input type="text" name="skill" placeholder="Skill to remove" required>
+        <button type="submit" class="btn-utility">Remove Skill</button>
+      </form>
+      <small>Demonstrates dynamic predicate updates</small>
+    </div>
+    
+    
+  </div>
+</div>
+</div>
+
+
+<style>
+.btn-primary {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  border: none;
+  color: white;
+  font-weight: 600;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+}
+
+.btn-secondary {
+  background: linear-gradient(135deg, #10b981, #059669);
+  border: none;
+  color: white;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
+}
+
+.btn-utility {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  border: none;
+  color: white;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-utility:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+}
+
+.topic-form {
+  background: rgba(59, 130, 246, 0.05);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 16px;
+}
+
+.utilities-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  margin-top: 16px;
+}
+
+.utility-item {
+  background: rgba(245, 158, 11, 0.05);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.utility-item h4 {
+  margin: 0 0 16px 0;
+  color: #92400e;
+}
+
+.utility-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.utility-form input {
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.utility-form small {
+  color: #6b7280;
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+.concepts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.concept-item {
+  background: rgba(59, 130, 246, 0.05);
+  border: 1px solid rgba(59, 130, 246, 0.1);
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.concept-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.15);
+}
+
+.concept-item h4 {
+  margin: 0 0 8px 0;
+  color: #3b82f6;
+}
+
+.concept-item p {
+  margin: 0;
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.advanced-features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  margin-top: 16px;
+}
+
+.feature-card {
+  background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  padding: 20px;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.feature-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+  border-color: #3b82f6;
+}
+
+.feature-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.feature-card:hover::before {
+  transform: scaleX(1);
+}
+
+.feature-card h4 {
+  margin: 0 0 12px 0;
+  color: #1e293b;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.feature-card p {
+  margin: 0;
+  font-size: 14px;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+.feature-badge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #374151;
+}
+
+/* Enhanced form styling */
+input, select {
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  color: #374151;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+input:focus, select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+select {
+  cursor: pointer;
+}
+
+small {
+  color: #6b7280;
+  font-size: 12px;
+  margin-top: 4px;
+  display: block;
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+  .utilities-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .concepts-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+}
+</style>
+{% endblock %}

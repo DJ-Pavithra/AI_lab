@@ -1,0 +1,277 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card header-card">
+  <h2>📈 Learning Progress Tracking</h2>
+  <p>Track your learning progress using advanced dynamic predicates and Prolog's runtime capabilities.</p>
+</div>
+
+<!-- Progress Tracking Form -->
+<div class="card">
+  <h3>➕ Add Progress Entry</h3>
+  <form method="POST" class="progress-form">
+    <div class="form-row">
+      <div class="form-group">
+        <label for="topic">Topic:</label>
+        <select name="topic" id="topic" required>
+          <option value="">Select a topic...</option>
+          <option value="html">HTML</option>
+          <option value="css">CSS</option>
+          <option value="javascript">JavaScript</option>
+          <option value="react">React</option>
+          <option value="python">Python</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label for="status">Status:</label>
+        <select name="status" id="status" required>
+          <option value="started">Started</option>
+          <option value="in_progress">In Progress</option>
+          <option value="completed">Completed</option>
+          <option value="reviewing">Reviewing</option>
+        </select>
+      </div>
+    </div>
+    
+    <button type="submit" class="btn-primary">📝 Track Progress</button>
+  </form>
+</div>
+
+<!-- Current Progress Display -->
+<div class="card">
+  <h3>📊 Current Learning Progress</h3>
+  <div class="progress-grid">
+    {% for topic, progress_entries in progress_data.items() %}
+    <div class="progress-item">
+      <h4>{{ topic.replace('_', ' ').title() }}</h4>
+      {% if progress_entries %}
+        <div class="progress-timeline">
+          {% for entry in progress_entries %}
+          {% set parts = entry.split(',') %}
+          {% if parts|length > 1 %}
+            <div class="timeline-entry">
+              {% set status_val = parts[0].strip().replace('_', ' ').title() %}
+              <span class="status-badge status-{{ parts[0].strip().replace(' ', '_').lower() }}">
+                {{ status_val }}
+              </span>
+              <span class="timestamp">
+                {% if parts|length > 1 %}{{ parts[1].strip() }}{% else %}-{% endif %}
+              </span>
+            </div>
+          {% else %}
+            <div class="timeline-entry">
+              <span class="status-badge status-unknown">Unknown</span>
+              <span class="timestamp">-</span>
+            </div>
+          {% endif %}
+          
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="no-progress">No progress tracked yet</p>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Navigation -->
+<div class="card">
+  <h3>🧭 Navigation</h3>
+  <div class="navigation-grid">
+    <a href="{{ url_for('home') }}" class="nav-btn primary">🏠 Back to Home</a>
+    <a href="{{ url_for('advanced_analysis') }}" class="nav-btn secondary">🔬 Advanced Analysis</a>
+    <a href="{{ url_for('meta_programming') }}" class="nav-btn secondary">⚙️ Meta-Programming</a>
+  </div>
+</div>
+
+<style>
+.header-card {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  border: none;
+}
+
+.header-card h2 {
+  margin: 0 0 16px 0;
+  color: white;
+}
+
+.header-card p {
+  margin: 0;
+  opacity: 0.9;
+}
+
+.progress-form {
+  margin-top: 16px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.form-group select {
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  background: white;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #10b981, #059669);
+  border: none;
+  color: white;
+  font-weight: 600;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+}
+
+.progress-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  margin-top: 16px;
+}
+
+.progress-item {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.progress-item h4 {
+  margin: 0 0 16px 0;
+  color: #1e293b;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.progress-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.timeline-entry {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+}
+
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status-started {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status-in_progress {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.status-completed {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status-reviewing {
+  background: #fce7f3;
+  color: #be185d;
+}
+
+.timestamp {
+  font-size: 12px;
+  color: #6b7280;
+  font-family: monospace;
+}
+
+.no-progress {
+  color: #6b7280;
+  font-style: italic;
+  margin: 0;
+}
+
+.navigation-grid {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+.nav-btn {
+  padding: 12px 24px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-btn.primary {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+}
+
+.nav-btn.secondary {
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+.nav-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+@media (max-width: 768px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .progress-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .navigation-grid {
+    flex-direction: column;
+  }
+}
+</style>
+{% endblock %} 

@@ -1,0 +1,756 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- Header Section -->
+<div class="card header-card">
+  <div class="header-content">
+    <h2>🎯 Learning Path Generated for: <span class="goal-pill">{{ goal.replace('_', ' ').title() }}</span></h2>
+    <div class="user-info">
+      <span class="info-badge">👤 Level: {{ user_level.title() }}</span>
+      <span class="info-badge">🎨 Style: {{ learning_style.title() }}</span>
+      <span class="info-badge">⏰ Available: {{ available }} hours</span>
+    </div>
+    <div class="skills-display">
+      <strong>Current Skills:</strong>
+      {% for skill in skills %}
+        <span class="skill-pill">{{ skill }}</span>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<!-- Main Learning Path -->
+<div class="card main-path-card">
+  <h3>🚀 Your Personalized Learning Path</h3>
+</div>
+
+
+<script>
+function submitProgress(topic, isChecked) {
+  const form = document.getElementById('progress-form');
+  const input = document.createElement('input');
+  input.type = 'hidden';
+  input.name = 'topic';
+  input.value = topic;
+  form.appendChild(input);
+  const statusInput = document.createElement('input');
+  statusInput.type = 'hidden';
+  statusInput.name = 'status';
+  statusInput.value = isChecked ? 'complete' : 'started';
+  form.appendChild(statusInput);
+  form.submit();
+}
+</script>
+
+<!-- Main Learning Path Timeline -->
+<div class="card main-path-card">
+  <h3>🚀 Your Personalized Learning Path (Timeline)</h3>
+  <div class="path-summary">
+    <div class="summary-item">
+      <span class="summary-label">Total Topics:</span>
+      <span class="summary-value">{{ path_data|length }}</span>
+    </div>
+    <div class="summary-item">
+      <span class="summary-label">Total Duration:</span>
+      <span class="summary-value">{{ total_time }} hours</span>
+    </div>
+    <div class="summary-item">
+      <span class="summary-label">Status:</span>
+      <span class="summary-value status-{{ 'success' if total_time <= available else 'warning' }}">
+        {{ suggestion }}
+      </span>
+    </div>
+  </div>
+  
+  <div class="path-timeline">
+    {% for item in path_data %}
+    <div class="timeline-item difficulty-{{ item.difficulty }}">
+      <div class="timeline-marker"></div>
+      <div class="timeline-content">
+        <h4>{{ item.topic.replace('_', ' ').title() }}</h4>
+        <div class="topic-meta">
+          <span class="meta-badge duration">{{ item.duration }}h</span>
+          <span class="meta-badge difficulty difficulty-{{ item.difficulty }}">{{ item.difficulty }}</span>
+          <span class="meta-badge category">{{ item.category }}</span>
+        </div>
+        <p class="topic-description">{{ item.description }}</p>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Visualizations Section -->
+<div class="card">
+  <h3>📊 Learning Path Visualizations</h3>
+  <div class="charts-grid">
+    <div class="chart-item">
+      <h4>Timeline Overview</h4>
+      <img src="{{ img_url }}" alt="Learning path timeline" class="chart-image" />
+    </div>
+    <div class="chart-item">
+      <h4>Difficulty Distribution</h4>
+      <img src="{{ chart1_url }}" alt="Difficulty chart" class="chart-image" />
+    </div>
+    <div class="chart-item">
+      <h4>Category Breakdown</h4>
+      <img src="{{ chart2_url }}" alt="Category chart" class="chart-image" />
+    </div>
+    <div class="chart-item">
+      <h4>Duration Timeline</h4>
+      <img src="{{ chart3_url }}" alt="Duration chart" class="chart-image" />
+    </div>
+  </div>
+</div>
+
+<!-- Prolog Concepts Showcase -->
+<div class="card">
+  <h3>🧠 Prolog Concepts in Action</h3>
+  
+  <!-- Unification Examples -->
+  <div class="concept-section">
+    <h4>🔍 Unification Examples</h4>
+    <div class="concept-grid"> 
+      <div class="concept-card">
+        <h5>Same Difficulty Topics</h5>
+        <div class="concept-content">
+          {% if same_diff_pairs %}
+            {% for t1, t2 in same_diff_pairs[:8] %}
+              <span class="pair-badge">{{ t1.replace('_', ' ') }} ↔ {{ t2.replace('_', ' ') }}</span>
+    {% endfor %}
+          {% else %}
+            <p>No same-difficulty pairs found</p>
+          {% endif %}
+        </div>
+</div>
+
+      
+    </div>
+  </div>
+
+  <!-- Backtracking and Cut Operations -->
+  <div class="concept-section">
+    <h4> Cut Operations</h4>
+    <div class="concept-grid">
+      <div class="concept-card">
+        <h5>First Learnable Topic (Cut)</h5>
+        <div class="concept-content">
+          {% if first_topic %}
+            <span class="topic-badge first-topic">{{ first_topic.replace('_', ' ') }}</span>
+          {% else %}
+            <p>No first topic found</p>
+          {% endif %}
+        </div>
+      </div>
+      
+      <div class="concept-card">
+        <h5>Cannot Learn Yet (Negation)</h5>
+        <div class="concept-content">
+          {% if cannot %}
+            {% for topic in cannot[:8] %}
+              <span class="topic-badge cannot">{{ topic.replace('_', ' ') }}</span>
+            {% endfor %}
+            {% if cannot|length > 8 %}
+              <span class="more-indicator">+{{ cannot|length - 8 }} more</span>
+            {% endif %}
+      {% else %}
+            <p>Great! You can learn everything</p>
+      {% endif %}
+    </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Arithmetic and List Operations -->
+  <div class="concept-section">
+    <h4>🧮 Arithmetic & List Operations</h4>
+    <div class="concept-grid">
+      
+      
+      <div class="concept-card">
+        <h5>Long Topics (≥ {{ short_threshold }}h)</h5>
+        <div class="concept-content">
+          {% if long_topics %}
+            {% for topic in long_topics[:8] %}
+              <span class="topic-badge long">{{ topic.replace('_', ' ') }}</span>
+            {% endfor %}
+            {% if long_topics|length > 8 %}
+              <span class="more-indicator">+{{ long_topics|length - 8 }} more</span>
+            {% endif %}
+          {% else %}
+            <p>No long topics found</p>
+          {% endif %}
+  </div>
+</div>
+
+      <div class="concept-card">
+        <h5>List Intersection with Goal</h5>
+        <div class="concept-content">
+          {% if intersection %}
+            {% for topic in intersection %}
+              <span class="topic-badge intersection">{{ topic.replace('_', ' ') }}</span>
+            {% endfor %}
+          {% else %}
+            <p>No intersection found</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quantifiers -->
+  <div class="concept-section">
+    <h4>🔢 Quantifiers</h4>
+    <div class="concept-grid">
+      <div class="concept-card">
+        <h5>Existential (∃): Some Topic Available?</h5>
+        <div class="concept-content">
+          {% if some_topic %}
+            <span class="topic-badge existential">Yes: {{ some_topic.replace('_', ' ') }}</span>
+      {% else %}
+            <span class="topic-badge existential">No topics available</span>
+          {% endif %}
+        </div>
+      </div>
+      
+      <div class="concept-card">
+        <h5>Universal (∀): All Prereqs Known for {{ universal_demo_topic.replace('_', ' ').title() }}?</h5>
+        <div class="concept-content">
+          <span class="topic-badge universal {{ 'success' if all_prereqs_known else 'warning' }}">
+            {{ "Yes" if all_prereqs_known else "No" }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recursion Examples -->
+  <div class="concept-section">
+    <h4>🔄 Recursion Examples</h4>
+    <div class="concept-grid">
+      <div class="concept-card">
+        <h5>All Prerequisites (Recursive)</h5>
+        <div class="concept-content">
+          {% if all_prereqs_data %}
+            {% for topic, prereqs in all_prereqs_data.items() %}
+              <div class="prereq-group">
+                <strong>{{ topic.replace('_', ' ') }}:</strong>
+                {% for prereq in prereqs[:5] %}
+                  <span class="prereq-badge">{{ prereq.replace('_', ' ') }}</span>
+                {% endfor %}
+                {% if prereqs|length > 5 %}
+                  <span class="more-indicator">+{{ prereqs|length - 5 }} more</span>
+                {% endif %}
+              </div>
+          {% endfor %}
+          {% else %}
+            <p>No prerequisite data available</p>
+      {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Quick Actions -->
+    <div class="card">
+  <h3>⚡ Quick Actions</h3>
+  <div class="actions-grid">
+    <a href="{{ url_for('home') }}" class="action-btn primary">🔄 Generate Another Path</a>
+    <a href="#" onclick="window.print()" class="action-btn secondary">🖨️ Print Path</a>
+    <a href="#" onclick="downloadPath()" class="action-btn secondary">💾 Download Path</a>
+  </div>
+</div>
+
+<style>
+/* Header Styles */
+.header-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+}
+
+.header-content h2 {
+  margin: 0 0 16px 0;
+  color: white;
+}
+
+.goal-pill {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.user-info {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.info-badge {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.skills-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.skill-pill {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Main Path Styles */
+.main-path-card {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+  border: none;
+}
+
+.path-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.summary-item {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 16px;
+  border-radius: 12px;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.summary-label {
+  display: block;
+  font-size: 14px;
+  opacity: 0.9;
+  margin-bottom: 8px;
+}
+
+.summary-value {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.status-success {
+  color: #10b981;
+}
+
+.status-warning {
+  color: #f59e0b;
+}
+
+/* Timeline Styles */
+.path-timeline {
+  position: relative;
+  padding-left: 24px;
+}
+
+.path-timeline::before {
+  content: '';
+  position: absolute;
+  left: 12px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 24px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.timeline-marker {
+  position: absolute;
+  left: -36px;
+  top: 20px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: white;
+  border: 3px solid #f093fb;
+}
+
+.timeline-content h4 {
+  margin: 0 0 12px 0;
+  color: white;
+}
+
+.topic-meta {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.meta-badge {
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.meta-badge.duration {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.meta-badge.difficulty-beginner {
+  background: #10b981;
+  color: white;
+}
+
+.meta-badge.difficulty-intermediate {
+  background: #f59e0b;
+  color: white;
+}
+
+.meta-badge.difficulty-advanced {
+  background: #ef4444;
+  color: white;
+}
+
+.meta-badge.category {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+}
+
+.topic-description {
+  margin: 0;
+  opacity: 0.9;
+  font-size: 14px;
+}
+
+/* Charts Grid */
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  margin-top: 16px;
+}
+
+.chart-item {
+  text-align: center;
+}
+
+.chart-item h4 {
+  margin: 0 0 12px 0;
+  color: #374151;
+}
+
+.chart-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Concept Sections */
+.concept-section {
+  margin-bottom: 32px;
+}
+
+.concept-section h4 {
+  color: #1f2937;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.concept-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.concept-card {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.3s ease;
+}
+
+.concept-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.concept-card h5 {
+  margin: 0 0 16px 0;
+  color: #374151;
+  font-size: 16px;
+}
+
+.concept-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Badge Styles */
+.pair-badge {
+  background: #dbeafe;
+  color: #1e40af;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  display: inline-block;
+  margin: 2px;
+}
+
+.topic-badge {
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  display: inline-block;
+  margin: 2px;
+  font-weight: 500;
+}
+
+.topic-badge.learnable {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.topic-badge.first-topic {
+  background: #fef3c7;
+  color: #92400e;
+  font-weight: bold;
+}
+
+.topic-badge.cannot {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.topic-badge.short {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.topic-badge.long {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.topic-badge.intersection {
+  background: #e0e7ff;
+  color: #3730a3;
+}
+
+.topic-badge.existential {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.topic-badge.universal.success {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.topic-badge.universal.warning {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.topic-badge.difficulty-beginner {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.topic-badge.difficulty-intermediate {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.topic-badge.difficulty-advanced {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.topic-badge.category-frontend {
+  background: #e0e7ff;
+  color: #3730a3;
+}
+
+.topic-badge.category-backend {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.topic-badge.category-design {
+  background: #fce7f3;
+  color: #be185d;
+}
+
+.topic-badge.category-tools {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.topic-badge.category-security {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.topic-badge.category-cloud {
+  background: #e0e7ff;
+  color: #3730a3;
+}
+
+.topic-badge.category-devops {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.topic-badge.recommendation {
+  background: #f3e8ff;
+  color: #7c3aed;
+}
+
+.more-indicator {
+  color: #6b7280;
+  font-size: 12px;
+  font-style: italic;
+}
+
+.prereq-group, .diff-group, .cat-group, .rec-group {
+  margin-bottom: 12px;
+}
+
+.prereq-badge {
+  background: #f3f4f6;
+  color: #374151;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  margin: 2px;
+}
+
+.level-rec {
+  margin-bottom: 8px;
+}
+
+.level-label {
+  font-weight: 600;
+  color: #374151;
+  margin-right: 8px;
+}
+
+/* Actions Grid */
+.actions-grid {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.action-btn {
+  padding: 12px 24px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.action-btn.primary {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: white;
+}
+
+.action-btn.secondary {
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+.action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .user-info {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .path-summary {
+    grid-template-columns: 1fr;
+  }
+  
+  .concept-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .actions-grid {
+    flex-direction: column;
+  }
+}
+</style>
+
+<script>
+function downloadPath() {
+  // Create a text representation of the learning path
+  let pathText = `Learning Path: {{ goal.replace('_', ' ').title() }}\n`;
+  pathText += `Generated on: ${new Date().toLocaleDateString()}\n`;
+  pathText += `User Level: {{ user_level.title() }}\n`;
+  pathText += `Learning Style: {{ learning_style.title() }}\n`;
+  pathText += `Available Time: {{ available }} hours\n\n`;
+  
+  pathText += `Current Skills: {{ skills|join(', ') }}\n\n`;
+  
+  pathText += `Learning Path:\n`;
+  {% for item in path_data %}
+  pathText += `{{ loop.index }}. {{ item.topic.replace('_', ' ').title() }}\n`;
+  pathText += `   Duration: {{ item.duration }} hours\n`;
+  pathText += `   Difficulty: {{ item.difficulty }}\n`;
+  pathText += `   Category: {{ item.category }}\n`;
+  pathText += `   Description: {{ item.description }}\n\n`;
+  {% endfor %}
+  
+  pathText += `Total Duration: {{ total_time }} hours\n`;
+  pathText += `Status: {{ suggestion }}\n`;
+  
+  // Create and download the file
+  const blob = new Blob([pathText], { type: 'text/plain' });
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'learning-path-{{ goal }}.txt';
+  document.body.appendChild(a);
+  a.click();
+  window.URL.revokeObjectURL(url);
+  document.body.removeChild(a);
+}
+</script>
+{% endblock %}

@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <h2>🚧 Topics You Can't Learn Yet</h2>
+    
+    {% if not skills_entered %}
+        <div class="alert alert-info">
+            ℹ️ No skills entered yet. <a href="{{ url_for('home') }}">Go back</a> to enter your known skills.
+        </div>
+    {% else %}
+        <p>Based on your current skills, here are topics you can't learn yet due to missing prerequisites.</p>
+    {% endif %}
+    
+    <div class="skills-display">
+        <strong>Your current skills:</strong>
+        {% if request.args.get('skills') %}
+            {% for skill in request.args.get('skills').split(',') %}
+                <span class="skill-tag">{{ skill.strip() }}</span>
+            {% endfor %}
+        {% else %}
+            <span class="no-skills">No skills entered</span>
+        {% endif %}
+    </div>
+    
+    {% if unlearnable_topics %}
+        <div class="topics-grid">
+            {% for topic in unlearnable_topics %}
+                <div class="topic-card">
+                    <h3>{{ topic.topic|replace('_', ' ')|title }}</h3>
+                    <p class="missing">Missing Prerequisites:</p>
+                    <ul>
+                        {% for prereq in topic.missing_prereqs %}
+                            <li>{{ prereq|replace('_', ' ')|title }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endfor %}
+        </div>
+    {% elif skills_entered %}
+        <div class="alert alert-success">
+            🎉 Great news! With your current skills, you can learn all available topics.
+        </div>
+    {% endif %}
+    
+    <div class="navigation-buttons">
+        <a href="{{ url_for('home') }}" class="btn btn-primary">← Back to Home</a>
+        <a href="{{ url_for('learning_progress') }}" class="btn btn-secondary">View Learning Progress →</a>
+    </div>
+</div>
+
+<style>
+.skills-display {
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background: #1e293b;
+    border-radius: 8px;
+}
+
+.skill-tag {
+    display: inline-block;
+    background: #3b82f6;
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    margin: 0.25rem;
+    font-size: 0.9rem;
+}
+
+.no-skills {
+    color: #94a3b8;
+    font-style: italic;
+}
+
+.alert {
+    padding: 1rem;
+    border-radius: 8px;
+    margin: 1rem 0;
+}
+
+.alert-info {
+    background: #0ea5e9;
+    color: white;
+}
+
+.alert-success {
+    background: #10b981;
+    color: white;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+}
+
+th, td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid #334155;
+}
+
+th {
+    background: #1e293b;
+}
+
+tr:hover {
+    background: #1e293b;
+}
+</style>
+</div>
+
+<style>
+.topics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+}
+
+.topic-card {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-left: 4px solid #ff6b6b;
+}
+
+.topic-card h3 {
+    margin-top: 0;
+    color: #333;
+}
+
+.missing {
+    font-weight: 600;
+    color: #ff6b6b;
+    margin-bottom: 0.5rem;
+}
+
+.topic-card ul {
+    margin: 0;
+    padding-left: 1.2rem;
+}
+
+.topic-card li {
+    margin-bottom: 0.25rem;
+    color: #555;
+}
+
+.navigation-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2rem;
+}
+
+.btn {
+    padding: 0.6rem 1.2rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background: #4a6cf7;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #3a5ce4;
+}
+
+.btn-secondary {
+    background: #f1f5f9;
+    color: #334155;
+    border: 1px solid #e2e8f0;
+}
+
+.btn-secondary:hover {
+    background: #e2e8f0;
+}
+
+.alert {
+    padding: 1rem;
+    border-radius: 4px;
+    margin: 1.5rem 0;
+    background: #dcfce7;
+    color: #166534;
+    border-left: 4px solid #22c55e;
+}
+</style>
+{% endblock %}

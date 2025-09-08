@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-6">Exhaustive Path Finding Results</h1>
+    
+    <div class="bg-white shadow-md rounded p-6 mb-6">
+        <h2 class="text-xl font-semibold mb-4">Search Parameters</h2>
+        <p class="mb-2">Start Topic: <span class="font-medium">{{ start_topic }}</span></p>
+        <p class="mb-2">Goal Topic: <span class="font-medium">{{ goal_topic }}</span></p>
+        <p class="mb-2">Max Depth: <span class="font-medium">{{ max_depth }}</span></p>
+    </div>
+
+    <div class="bg-white shadow-md rounded p-6">
+        <h2 class="text-xl font-semibold mb-4">Found Paths ({{ paths|length }})</h2>
+        
+        {% if paths %}
+            {% for path in paths %}
+            <div class="mb-4 p-4 bg-gray-50 rounded">
+                <h3 class="font-medium mb-2">Path #{{ loop.index }}</h3>
+                <div class="flex items-center space-x-2">
+                    {% for topic in path %}
+                        <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded">{{ topic }}</span>
+                        {% if not loop.last %}
+                            <span class="text-gray-400">→</span>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-gray-600">No paths found.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

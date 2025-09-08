@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% macro render_tree(tree) %}
+  {% for node in tree %}
+    <li>
+      <strong>{{ node[0] }}</strong>: {{ node[1] }}
+      {% if node[2] %}
+        <ul>
+          {{ render_tree(node[2]) }}
+        </ul>
+      {% endif %}
+    </li>
+  {% endfor %}
+{% endmacro %}
+{% block content %}
+<div class="card">
+  <h2>Course Recommendation Tree for {{ goal }}</h2>
+  {% if course_tree and course_tree|length > 0 %}
+    <ul>
+      {{ render_tree(course_tree) }}
+    </ul>
+  {% else %}
+    <p>No course recommendations found for this path.</p>
+  {% endif %}
+</div>
+{% endblock %}

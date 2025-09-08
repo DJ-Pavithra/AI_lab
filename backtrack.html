@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-6">Backtracking Path Finder</h1>
+    
+    <div class="bg-white shadow-md rounded p-6 mb-6">
+        <form action="{{ url_for('exhaustive_paths') }}" method="post" class="space-y-4">
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="start_topic">
+                    Start Topic
+                </label>
+                <input type="text" 
+                       name="start_topic" 
+                       id="start_topic" 
+                       value="html"
+                       class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            </div>
+
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="goal_topic">
+                    Goal Topic
+                </label>
+                <input type="text" 
+                       name="goal_topic" 
+                       id="goal_topic" 
+                       value="react"
+                       class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            </div>
+
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="max_depth">
+                    Maximum Search Depth
+                </label>
+                <input type="number" 
+                       name="max_depth" 
+                       id="max_depth" 
+                       value="5"
+                       min="1"
+                       max="10"
+                       class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            </div>
+
+            <button type="submit" 
+                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                Find All Paths
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

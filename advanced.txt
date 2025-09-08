@@ -1,0 +1,79 @@
+<div class="card">
+    <h3>🚀 Advanced Prolog Demonstrations</h3>
+    <div class="advanced-features-grid">
+      <a href="{{ url_for('advanced_analysis') }}" class="feature-card">
+        <h4>🔬 Advanced Analysis</h4>
+        <p>Advanced list operations, pattern matching, clustering, and search algorithms</p>
+        <span class="feature-badge">New</span>
+      </a>
+      
+      <a href="{{ url_for('export_data') }}" class="feature-card">
+        <h4>📤 Data Export</h4>
+        <p>Export topics in JSON, Prolog, and other formats using advanced I/O</p>
+        <span class="feature-badge">I/O</span>
+      </a>
+      
+      <a href="{{ url_for('learning_progress') }}" class="feature-card">
+        <h4>📈 Progress Tracking</h4>
+        <p>Track learning progress using advanced dynamic predicates</p>
+        <span class="feature-badge">Dynamic</span>
+      </a>
+      
+      <a href="{{ url_for('topic_relationships') }}" class="feature-card">
+        <h4>🔗 Topic Relationships</h4>
+        <p>Manage complex topic relationships and dependencies</p>
+        <span class="feature-badge">Relations</span>
+      </a>
+      
+      <a href="{{ url_for('meta_programming') }}" class="feature-card">
+        <h4>⚙️ Meta-Programming</h4>
+        <p>Inspect predicates, execute dynamic goals, and compose predicates</p>
+        <span class="feature-badge">Meta</span>
+      </a>
+      
+      <a href="{{ url_for('path_optimization') }}" class="feature-card">
+        <h4>🎯 Path Optimization</h4>
+        <p>Find optimal learning paths using advanced algorithms and strategic cuts</p>
+        <span class="feature-badge">Optimization</span>
+      </a>
+    </div>
+  </div>
+  <div class="card">
+    <h3>🔧 Dynamic Topic Addition (Prolog Demo)</h3>
+    <p>Demonstrate dynamic predicates by adding custom topics to the knowledge base!</p>
+    
+    <form method="POST" action="{{ url_for('add_topic') }}" class="topic-form">
+      <div class="row">
+        <div class="col">
+          <input type="text" name="topic_name" placeholder="Topic name" required>
+        </div>
+        <div class="col">
+          <input type="number" name="duration" placeholder="Duration (hours)" min="1" max="100" required>
+        </div>
+      </div>
+      
+      <div class="row">
+        <div class="col">
+          <select name="difficulty" required>
+            <option value="beginner">Beginner</option>
+            <option value="intermediate">Intermediate</option>
+            <option value="advanced">Advanced</option>
+          </select>
+        </div>
+        <div class="col">
+          <select name="category" required>
+            <option value="frontend">Frontend</option>
+            <option value="backend">Backend</option>
+            <option value="design">Design</option>
+            <option value="tools">Tools</option>
+            <option value="security">Security</option>
+            <option value="cloud">Cloud</option>
+            <option value="devops">DevOps</option>
+          </select>
+        </div>
+      </div>
+      
+      <input type="text" name="description" placeholder="Topic description" required>
+      <button type="submit" class="btn-secondary">➕ Add Custom Topic</button>
+    </form>
+  </div>
